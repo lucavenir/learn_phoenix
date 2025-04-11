@@ -8,10 +8,17 @@ defmodule RaffleyWeb.Router do
     plug :put_root_layout, html: {RaffleyWeb.Layouts, :root}
     plug :protect_from_forgery
     plug :put_secure_browser_headers
+    plug :spy
   end
 
   pipeline :api do
     plug :accepts, ["json"]
+  end
+
+  def spy(conn, _opts) do
+    ~w(Hi Howdy Hello)
+    |> Enum.random()
+    |> then(fn greeting -> assign(conn, :greeting, greeting) end)
   end
 
   scope "/", RaffleyWeb do
