@@ -8,10 +8,18 @@ defmodule HeadsUpWeb.Router do
     plug :put_root_layout, html: {HeadsUpWeb.Layouts, :root}
     plug :protect_from_forgery
     plug :put_secure_browser_headers
+    plug :snoop
   end
 
   pipeline :api do
     plug :accepts, ["json"]
+  end
+
+  def snoop(conn, _opts) do
+    ~w(Yes No Maybe)
+    |> Enum.random()
+    |> Kernel.then(fn answer -> assign(conn, :answer, answer) end)
+    |> dbg()
   end
 
   scope "/", HeadsUpWeb do
