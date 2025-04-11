@@ -7,7 +7,7 @@ defmodule HeadsUpWeb.Endpoint do
   @session_options [
     store: :cookie,
     key: "_heads_up_key",
-    signing_salt: "CByrryLt",
+    signing_salt: "BO0P82Xq",
     same_site: "Lax"
   ]
 

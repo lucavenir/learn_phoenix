@@ -23,7 +23,7 @@ config :heads_up, HeadsUpWeb.Endpoint,
   check_origin: false,
   code_reloader: true,
   debug_errors: true,
-  secret_key_base: "gTGaCjNvuYG1oD1mXC8oS6RRXAFwZNvXyOB/ehTZemd3ZvWbSIVBp9JIt+/Rhnj+",
+  secret_key_base: "VjhlhwmD/hTysNAY6CsKTOqgwLOm17qf1azRnEZuSQufjS4QSpwhwgOEk/VObIbP",
   watchers: [
     esbuild: {Esbuild, :install_and_run, [:heads_up, ~w(--sourcemap=inline --watch)]},
     tailwind: {Tailwind, :install_and_run, [:heads_up, ~w(--watch)]}
