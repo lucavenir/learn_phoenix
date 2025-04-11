@@ -19,11 +19,11 @@ config :raffley, Raffley.Repo,
 config :raffley, RaffleyWeb.Endpoint,
   # Binding to loopback ipv4 address prevents access from other machines.
   # Change to `ip: {0, 0, 0, 0}` to allow access from other machines.
-  http: [ip: {127, 0, 0, 1}, port: 4000],
+  http: [ip: {127, 0, 0, 1}, port: 42069],
   check_origin: false,
   code_reloader: true,
   debug_errors: true,
-  secret_key_base: "r12jOJGSsdf0/8Tgcc5dP/jXtiTcUS/OJSSHhpvQCZG4Iohd09cKRNjOAalVyWau",
+  secret_key_base: "sNpii4ToA3+W+bJEjk3BZBYViq/tBHTqbay/yIDnwsv7divm2c2aPRqKekhXOQuU",
   watchers: [
     esbuild: {Esbuild, :install_and_run, [:raffley, ~w(--sourcemap=inline --watch)]},
     tailwind: {Tailwind, :install_and_run, [:raffley, ~w(--watch)]}
