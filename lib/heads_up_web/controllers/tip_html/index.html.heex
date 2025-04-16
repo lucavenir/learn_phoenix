@@ -1,0 +1,14 @@
+<div class="tips">
+  <h1>Safety first!</h1>
+  <p>
+    Your emojis are: {@emojis}
+  </p>
+  <ol>
+    <%= for tip <- @tips do %>
+      <li>
+        <h2>{tip.title}</h2>
+        <p>{tip.description}</p>
+      </li>
+    <% end %>
+  </ol>
+</div>
