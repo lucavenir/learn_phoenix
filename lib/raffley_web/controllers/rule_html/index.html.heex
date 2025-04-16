@@ -7,7 +7,11 @@ HEEx = HTML + EEx
 
   <ol>
     <%= for rule <- @rules do %>
-      <li>{rule.text}</li>
+      <li>
+        <a href={~p"/rules/#{rule.id}"}>
+          {rule.text}
+        </a>
+      </li>
     <% end %>
   </ol>
 </div>

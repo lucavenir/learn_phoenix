@@ -2,17 +2,17 @@ defmodule RaffleyWeb.Router do
   use RaffleyWeb, :router
 
   pipeline :browser do
-    plug :accepts, ["html"]
-    plug :fetch_session
-    plug :fetch_live_flash
-    plug :put_root_layout, html: {RaffleyWeb.Layouts, :root}
-    plug :protect_from_forgery
-    plug :put_secure_browser_headers
-    plug :spy
+    plug(:accepts, ["html"])
+    plug(:fetch_session)
+    plug(:fetch_live_flash)
+    plug(:put_root_layout, html: {RaffleyWeb.Layouts, :root})
+    plug(:protect_from_forgery)
+    plug(:put_secure_browser_headers)
+    plug(:spy)
   end
 
   pipeline :api do
-    plug :accepts, ["json"]
+    plug(:accepts, ["json"])
   end
 
   def spy(conn, _opts) do
@@ -22,10 +22,11 @@ defmodule RaffleyWeb.Router do
   end
 
   scope "/", RaffleyWeb do
-    pipe_through :browser
+    pipe_through(:browser)
 
-    get "/", PageController, :home
-    get "/rules", RuleController, :index
+    get("/", PageController, :home)
+    get("/rules", RuleController, :index)
+    get("/rules/:id", RuleController, :show)
   end
 
   # Other scopes may use custom stacks.
@@ -43,10 +44,10 @@ defmodule RaffleyWeb.Router do
     import Phoenix.LiveDashboard.Router
 
     scope "/dev" do
-      pipe_through :browser
+      pipe_through(:browser)
 
-      live_dashboard "/dashboard", metrics: RaffleyWeb.Telemetry
-      forward "/mailbox", Plug.Swoosh.MailboxPreview
+      live_dashboard("/dashboard", metrics: RaffleyWeb.Telemetry)
+      forward("/mailbox", Plug.Swoosh.MailboxPreview)
     end
   end
 end
