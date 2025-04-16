@@ -17,4 +17,9 @@
       € {@tickets * @price}
     </div>
   </section>
+
+  <form phx-submit="set-price">
+    <label for="">Ticket Price:</label>
+    <input type="number" name="price" value={@price} />
+  </form>
 </div>
