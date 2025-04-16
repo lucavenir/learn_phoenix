@@ -6,8 +6,10 @@
   <ol>
     <%= for tip <- @tips do %>
       <li>
-        <h2>{tip.title}</h2>
-        <p>{tip.description}</p>
+        <a href={~p"/tips/#{tip.id}"}>
+          <h2>This is Tip #{tip.id}</h2>
+        </a>
+        <p>{tip.text}</p>
       </li>
     <% end %>
   </ol>

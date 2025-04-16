@@ -19,7 +19,6 @@ defmodule HeadsUpWeb.Router do
     ~w(Yes No Maybe)
     |> Enum.random()
     |> Kernel.then(fn answer -> assign(conn, :answer, answer) end)
-    |> dbg()
   end
 
   scope "/", HeadsUpWeb do
@@ -28,6 +27,7 @@ defmodule HeadsUpWeb.Router do
     get "/", PageController, :home
 
     get "/tips", TipController, :index
+    get "/tips/:id", TipController, :show
   end
 
   # Other scopes may use custom stacks.

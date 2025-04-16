@@ -5,11 +5,12 @@ defmodule HeadsUpWeb.TipController do
 
   def index(conn, _params) do
     tips = Tips.list_tips()
-    emojis = ~w(🐢, 👯‍♂️, 😊) |> Enum.random() |> String.duplicate(5)
+    emojis = ~w(🐢 👯‍♂️ 😊) |> Enum.random() |> String.duplicate(5)
+    render(conn, :index, tips: tips, emojis: emojis)
+  end
 
-    conn
-    |> assign(:tips, tips)
-    |> assign(:emojis, emojis)
-    |> render(:index)
+  def show(conn, %{"id" => id}) do
+    tip = Tips.get_tip(id)
+    render(conn, :tip, tip: tip)
   end
 end
