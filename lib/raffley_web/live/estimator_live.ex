@@ -3,8 +3,19 @@ defmodule RaffleyWeb.EstimatorLive do
 
   @impl true
   def mount(_params, _session, socket) do
+    if connected?(socket) do
+      Process.send_after(self(), :tick, :timer.seconds(2))
+    end
+
     socket = assign(socket, tickets: 0, price: 30)
     {:ok, socket}
+  end
+
+  @impl true
+  def handle_info(:tick, socket) do
+    Process.send_after(self(), :tick, :timer.seconds(2))
+    socket = update(socket, :tickets, &(&1 + 10))
+    {:noreply, socket}
   end
 
   @impl true
