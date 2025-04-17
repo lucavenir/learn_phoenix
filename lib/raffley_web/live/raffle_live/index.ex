@@ -14,19 +14,35 @@ defmodule RaffleyWeb.RaffleLive.Index do
     ~H"""
     <div class="raffle-index">
       <div class="raffles">
-        <div :for={raffle <- @raffles} class="card">
-          <img src={raffle.image_path} alt="an image of the prize" />
-          <h2>{raffle.prize}</h2>
-          <div class="details">
-            <div class="price">
-              € {raffle.ticket_price} per ticket
-            </div>
-            <div class="badge">
-              {raffle.status}
-            </div>
-          </div>
-        </div>
+        <.raffle_card :for={raffle <- @raffles} raffle={raffle} />
       </div>
+    </div>
+    """
+  end
+
+  attr :raffle, Raffley.Raffle, required: true
+
+  def raffle_card(assigns) do
+    ~H"""
+    <div class="card">
+      <img src={@raffle.image_path} alt="an image of the prize" />
+      <h2>{@raffle.prize}</h2>
+      <div class="details">
+        <div class="price">
+          € {@raffle.ticket_price} per ticket
+        </div>
+        <.badge status={@raffle.status} />
+      </div>
+    </div>
+    """
+  end
+
+  attr :status, :atom, values: [:upcoming, :open, :closed], default: :upcoming
+
+  def badge(assigns) do
+    ~H"""
+    <div class="badge">
+      {@status}
     </div>
     """
   end
