@@ -3,8 +3,19 @@ defmodule HeadsUpWeb.EffortLive do
 
   @impl true
   def mount(_params, _session, socket) do
+    if connected?(socket) do
+      Process.send_after(self(), :tick, :timer.seconds(2))
+    end
+
     socket = assign(socket, responders: 0, minutes_per_responder: 10)
     {:ok, socket}
+  end
+
+  @impl true
+  def handle_info(:tick, socket) do
+    Process.send_after(self(), :tick, :timer.seconds(2))
+    socket = update(socket, :responders, &(&1 + 3))
+    {:noreply, socket}
   end
 
   @impl true
