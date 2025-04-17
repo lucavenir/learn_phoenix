@@ -13,4 +13,11 @@ defmodule HeadsUpWeb.EffortLive do
     socket = update(socket, :responders, fn responders -> responders + amount end)
     {:noreply, socket}
   end
+
+  @impl true
+  def handle_event("compute", %{"minutes" => minutes}, socket) do
+    minutes = String.to_integer(minutes)
+    socket = assign(socket, minutes_per_responder: minutes)
+    {:noreply, socket}
+  end
 end
