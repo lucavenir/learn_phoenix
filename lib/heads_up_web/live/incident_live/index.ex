@@ -6,18 +6,20 @@ defmodule HeadsUpWeb.IncidentLive.Index do
 
   @impl true
   def mount(_params, _session, socket) do
-    socket = assign(socket, :incidents, Incidents.list_incidents())
+    socket = assign(socket, incidents: Incidents.list_incidents(), page_title: "Incidents")
     {:ok, socket}
   end
 
   @impl true
   def render(assigns) do
     ~H"""
-    <div class="incident-index">
-      <div class="incidents">
-        <.incident_card :for={incident <- @incidents} incident={incident} />
+    <Layouts.app flash={@flash}>
+      <div class="incident-index">
+        <div class="incidents">
+          <.incident_card :for={incident <- @incidents} incident={incident} />
+        </div>
       </div>
-    </div>
+    </Layouts.app>
     """
   end
 
