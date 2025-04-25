@@ -16,4 +16,22 @@ defmodule HeadsUpWeb.Components.HeadsUpComponents do
     </div>
     """
   end
+
+  slot :inner_block, required: true
+  slot :taglines
+
+  def headline(assigns) do
+    assigns = assign_new(assigns, :emoji, fn -> "🗣️" end)
+
+    ~H"""
+    <div class="headline">
+      <h1>
+        {render_slot(@inner_block)}
+      </h1>
+      <div :for={tagline <- @taglines} class="tagline">
+        {render_slot(tagline, @emoji)}
+      </div>
+    </div>
+    """
+  end
 end
