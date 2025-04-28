@@ -2,6 +2,7 @@ defmodule RaffleyWeb.RaffleLive.Index do
   use RaffleyWeb, :live_view
 
   alias Raffley.Raffles
+  alias Raffley.Raffles.Raffle
   alias RaffleyWeb.RaffleyComponents
 
   @impl true
@@ -32,7 +33,7 @@ defmodule RaffleyWeb.RaffleLive.Index do
     """
   end
 
-  attr :raffle, Raffley.Raffle, required: true
+  attr :raffle, Raffle, required: true
 
   def raffle_card(assigns) do
     ~H"""
