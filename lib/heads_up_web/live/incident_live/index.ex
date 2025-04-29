@@ -2,6 +2,7 @@ defmodule HeadsUpWeb.IncidentLive.Index do
   use HeadsUpWeb, :live_view
 
   alias HeadsUp.Incidents
+  alias HeadsUp.Incidents.Incident
   alias HeadsUpWeb.Components.HeadsUpComponents
 
   @impl true
@@ -23,7 +24,7 @@ defmodule HeadsUpWeb.IncidentLive.Index do
     """
   end
 
-  attr :incident, HeadsUp.Incident, required: true
+  attr :incident, Incident, required: true
 
   def incident_card(assigns) do
     ~H"""
