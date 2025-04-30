@@ -7,7 +7,11 @@ defmodule HeadsUpWeb.IncidentLive.Index do
 
   @impl true
   def mount(_params, _session, socket) do
-    socket = assign(socket, incidents: Incidents.list_incidents(), page_title: "Incidents")
+    socket =
+      socket
+      |> stream(:incidents, Incidents.list_incidents())
+      |> assign(page_title: "Incidents")
+
     {:ok, socket}
   end
 
@@ -16,8 +20,8 @@ defmodule HeadsUpWeb.IncidentLive.Index do
     ~H"""
     <Layouts.app flash={@flash}>
       <div class="incident-index">
-        <div class="incidents">
-          <.incident_card :for={incident <- @incidents} incident={incident} />
+        <div class="incidents" id="incidents" phx-update="stream">
+          <.incident_card :for={{id, incident} <- @streams.incident} id={id} incident={incident} />
         </div>
       </div>
     </Layouts.app>
@@ -25,10 +29,11 @@ defmodule HeadsUpWeb.IncidentLive.Index do
   end
 
   attr :incident, Incident, required: true
+  attr :id, :string, required: true
 
   def incident_card(assigns) do
     ~H"""
-    <div class="card">
+    <div class="card" id={@id}>
       <img src={@incident.image_path} />
       <h2>{@incident.name}</h2>
       <div class="details">
