@@ -7,11 +7,6 @@ defmodule RaffleyWeb.RaffleLive.Index do
 
   @impl true
   def mount(_params, _session, socket) do
-    {:ok, socket}
-  end
-
-  @impl true
-  def handle_params(params, _uri, socket) do
     statuses = Raffles.list_raffle_statuses()
 
     sorting = [
@@ -22,10 +17,18 @@ defmodule RaffleyWeb.RaffleLive.Index do
 
     socket =
       socket
-      |> stream(:raffles, Raffles.filter_raffles(params))
-      |> assign(:form, to_form(params))
       |> assign(:statuses, statuses)
       |> assign(:sorting, sorting)
+
+    {:ok, socket}
+  end
+
+  @impl true
+  def handle_params(params, _uri, socket) do
+    socket =
+      socket
+      |> stream(:raffles, Raffles.filter_raffles(params), reset: true)
+      |> assign(:form, to_form(params))
 
     {:noreply, socket}
   end
@@ -65,7 +68,7 @@ defmodule RaffleyWeb.RaffleLive.Index do
       <.input type="select" field={@form[:status]} prompt="status" options={@statuses} />
       <.input type="select" field={@form[:sort_by]} prompt="sort" options={@sorting} />
 
-      <.link navigate={~p"/raffles"}>
+      <.link patch={~p"/raffles"}>
         Reset
       </.link>
     </.form>
@@ -99,7 +102,7 @@ defmodule RaffleyWeb.RaffleLive.Index do
       |> Map.take([~w(q status sort_by)])
       |> Map.reject(fn {_, v} -> v == "" end)
 
-    socket = push_navigate(socket, to: ~p"/raffles?#{params}")
+    socket = push_patch(socket, to: ~p"/raffles?#{params}")
 
     {:noreply, socket}
   end
