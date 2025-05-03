@@ -17,7 +17,9 @@ defmodule HeadsUpWeb.IncidentLive.Show do
       socket
       |> assign(:page_title, "Incident #{incident.name} Details")
       |> assign(:incident, incident)
-      |> assign(:urgent, Incidents.urgent_incidents(incident))
+      |> assign_async(:urgent, fn ->
+        {:ok, %{urgent: Incidents.urgent_incidents(incident)}}
+      end)
 
     {:noreply, socket}
   end
@@ -53,17 +55,30 @@ defmodule HeadsUpWeb.IncidentLive.Show do
     """
   end
 
-  attr :incidents, :list, required: true
+  attr :incidents, Phoenix.LiveView.AsyncResult, required: true
 
   def urgent_incidents(assigns) do
     ~H"""
     <section>
       <h4>Urgent Incidents</h4>
-      <ul class="incidents">
-        <li :for={incident <- @incidents}>
-          <img src={incident.image_path} /> {incident.name}
-        </li>
-      </ul>
+      <.async_result :let={result} assign={@incidents}>
+        <:loading>
+          <div class="loading">
+            <div class="spinner"></div>
+          </div>
+        </:loading>
+        <:failed :let={reason}>
+          <div class="failed">
+            Whoops: {reason}
+          </div>
+        </:failed>
+
+        <ul class="incidents">
+          <li :for={incident <- result}>
+            <img src={incident.image_path} /> {incident.name}
+          </li>
+        </ul>
+      </.async_result>
     </section>
     """
   end

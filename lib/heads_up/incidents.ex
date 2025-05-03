@@ -33,6 +33,8 @@ defmodule HeadsUp.Incidents do
   def get_incident!(id), do: Repo.get!(Incident, id)
 
   def urgent_incidents(%Incident{} = incident) do
+    Process.sleep(:timer.seconds(3))
+
     Incident
     |> where([i], i.id != ^incident.id)
     |> order_by([i], desc: i.priority)
