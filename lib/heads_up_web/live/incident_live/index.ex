@@ -9,7 +9,7 @@ defmodule HeadsUpWeb.IncidentLive.Index do
   def mount(_params, _session, socket) do
     socket =
       socket
-      |> stream(:incidents, Incidents.list_incidents())
+      |> stream(:incidents, Incidents.filter_incidents())
       |> assign(page_title: "Incidents")
 
     {:ok, socket}
@@ -21,7 +21,7 @@ defmodule HeadsUpWeb.IncidentLive.Index do
     <Layouts.app flash={@flash}>
       <div class="incident-index">
         <div class="incidents" id="incidents" phx-update="stream">
-          <.incident_card :for={{id, incident} <- @streams.incident} id={id} incident={incident} />
+          <.incident_card :for={{id, incident} <- @streams.incidents} id={id} incident={incident} />
         </div>
       </div>
     </Layouts.app>
@@ -33,16 +33,18 @@ defmodule HeadsUpWeb.IncidentLive.Index do
 
   def incident_card(assigns) do
     ~H"""
-    <div class="card" id={@id}>
-      <img src={@incident.image_path} />
-      <h2>{@incident.name}</h2>
-      <div class="details">
-        <HeadsUpComponents.badge status={@incident.status} />
-        <div class="priority">
-          {@incident.priority}
+    <.link navigate={~p"/incidents/#{@incident.id}"}>
+      <div class="card" id={@id}>
+        <img src={@incident.image_path} />
+        <h2>{@incident.name}</h2>
+        <div class="details">
+          <HeadsUpComponents.badge status={@incident.status} />
+          <div class="priority">
+            {@incident.priority}
+          </div>
         </div>
       </div>
-    </div>
+    </.link>
     """
   end
 end
