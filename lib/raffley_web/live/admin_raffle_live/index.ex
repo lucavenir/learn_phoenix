@@ -23,6 +23,11 @@ defmodule RaffleyWeb.AdminRaffleLive.Index do
     <Layouts.app flash={@flash}>
       <div class="admin-index">
         <.header>
+          <:actions>
+            <.link navigate={~p"/admin/raffles/new"} class="button">
+              New Raffle
+            </.link>
+          </:actions>
           {@page_title}
         </.header>
         <.table id="admin-raffles-table" rows={@streams.raffles}>
