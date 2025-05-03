@@ -40,7 +40,11 @@ defmodule Raffley.Raffles do
     Process.sleep(:timer.seconds(2))
 
     Raffle
+    |> where(status: :open)
     |> where([r], r.id != ^raffle.id)
+    |> order_by(desc: :ticket_price)
+    |> limit(3)
+    |> Repo.all()
   end
 
   def list_raffle_statuses() do

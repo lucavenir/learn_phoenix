@@ -19,7 +19,7 @@ defmodule RaffleyWeb.RaffleLive.Show do
       |> assign(:raffle, raffle)
       |> assign(:page_title, raffle.prize)
       |> assign_async(:featured, fn ->
-        {:ok, %{featured_raffles: Raffles.featured_raffles(raffle)}}
+        {:ok, %{featured: Raffles.featured_raffles(raffle)}}
       end)
 
     {:noreply, socket}
@@ -67,7 +67,7 @@ defmodule RaffleyWeb.RaffleLive.Show do
             <div class="snipper"></div>
           </div>
         </:loading>
-        <:failed :let={{:error, reason}}>
+        <:failed :let={{:exit, reason}}>
           <div class="failed">
             Yikes..! This happened: {reason}
           </div>
