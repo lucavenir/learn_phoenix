@@ -37,6 +37,8 @@ defmodule Raffley.Raffles do
   end
 
   def featured_raffles(%Raffle{} = raffle) do
+    Process.sleep(:timer.seconds(2))
+
     Raffle
     |> where([r], r.id != ^raffle.id)
   end

@@ -18,7 +18,9 @@ defmodule RaffleyWeb.RaffleLive.Show do
       socket
       |> assign(:raffle, raffle)
       |> assign(:page_title, raffle.prize)
-      |> assign(:featured, Raffles.featured_raffles(raffle))
+      |> assign_async(:featured, fn ->
+        {:ok, %{featured_raffles: Raffles.featured_raffles(raffle)}}
+      end)
 
     {:noreply, socket}
   end
@@ -59,14 +61,27 @@ defmodule RaffleyWeb.RaffleLive.Show do
     ~H"""
     <section>
       <h4>Featured Raffles</h4>
-      <ul class="raffles">
-        <li :for={raffle <- @raffles}>
-          <.link navigate={~p"/raffles/#{raffle}"}>
-            <img src={raffle.image_path} alt={raffle.prize} />
-            {raffle.prize}
-          </.link>
-        </li>
-      </ul>
+      <.async_result :let={result} assign={@raffles}>
+        <:loading>
+          <div class="loading">
+            <div class="snipper"></div>
+          </div>
+        </:loading>
+        <:failed :let={{:error, reason}}>
+          <div class="failed">
+            Yikes..! This happened: {reason}
+          </div>
+        </:failed>
+
+        <ul class="raffles">
+          <li :for={raffle <- result}>
+            <.link navigate={~p"/raffles/#{raffle}"}>
+              <img src={raffle.image_path} alt={raffle.prize} />
+              {raffle.prize}
+            </.link>
+          </li>
+        </ul>
+      </.async_result>
     </section>
     """
   end
