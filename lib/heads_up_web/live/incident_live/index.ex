@@ -7,11 +7,21 @@ defmodule HeadsUpWeb.IncidentLive.Index do
 
   @impl true
   def mount(_params, _session, socket) do
+    statuses = Incidents.list_all_statuses()
+
+    sort_by = [
+      Name: "name",
+      "Priority high to low": "priority_desc",
+      "Priority low to high": "priority_asc"
+    ]
+
     socket =
       socket
-      |> stream(:incidents, Incidents.filter_incidents())
+      |> stream(:incidents, Incidents.list_incidents())
       |> assign(:form, to_form(%{}))
       |> assign(page_title: "Incidents")
+      |> assign(:statuses, statuses)
+      |> assign(:sort_by, sort_by)
 
     {:ok, socket}
   end
@@ -21,8 +31,11 @@ defmodule HeadsUpWeb.IncidentLive.Index do
     ~H"""
     <Layouts.app flash={@flash}>
       <div class="incident-index">
-        <.incident_form form={@form} />
+        <.incident_form form={@form} statuses={@statuses} sort_by={@sort_by} />
         <div class="incidents" id="incidents" phx-update="stream">
+          <div id="empty" class="no-results only:block hidden">
+            No incidents found. Try changing the filters.
+          </div>
           <.incident_card :for={{id, incident} <- @streams.incidents} id={id} incident={incident} />
         </div>
       </div>
@@ -31,13 +44,11 @@ defmodule HeadsUpWeb.IncidentLive.Index do
   end
 
   def incident_form(assigns) do
-    statuses = Incidents.list_all_statuses()
-
     ~H"""
-    <.form for={@form}>
-      <.input field={@form[:q]} placeholder="search..." autocomplete="off" />
-      <.input field={@form[:status]} type="select" prompt="status.." options={statuses} />
-      <.input field={@form[:sort_by]} type="select" prompt="sort by.." options={[:name, :priority]} />
+    <.form for={@form} phx-submit="filter" phx-change="filter">
+      <.input field={@form[:q]} placeholder="search..." autocomplete="off" phx-debounce="400" />
+      <.input field={@form[:status]} type="select" prompt="status.." options={@statuses} />
+      <.input field={@form[:sort_by]} type="select" prompt="sort by.." options={@sort_by} />
     </.form>
     """
   end
@@ -60,5 +71,15 @@ defmodule HeadsUpWeb.IncidentLive.Index do
       </div>
     </.link>
     """
+  end
+
+  @impl true
+  def handle_event("filter", params, socket) do
+    socket =
+      socket
+      |> assign(:form, to_form(params))
+      |> stream(:incidents, Incidents.filter_incidents(params), reset: true)
+
+    {:noreply, socket}
   end
 end
