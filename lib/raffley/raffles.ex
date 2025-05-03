@@ -24,4 +24,8 @@ defmodule Raffley.Raffles do
     Raffle
     |> where([r], r.id != ^raffle.id)
   end
+
+  def list_raffle_statuses() do
+    Ecto.Enum.values(Raffle, :status)
+  end
 end

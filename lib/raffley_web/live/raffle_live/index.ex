@@ -7,7 +7,10 @@ defmodule RaffleyWeb.RaffleLive.Index do
 
   @impl true
   def mount(_params, _session, socket) do
-    socket = stream(socket, :raffles, Raffles.list_raffles())
+    socket =
+      socket
+      |> stream(:raffles, Raffles.list_raffles())
+      |> assign(:form, to_form(%{}))
 
     {:ok, socket}
   end
@@ -26,6 +29,9 @@ defmodule RaffleyWeb.RaffleLive.Index do
             Any guesses?
           </:details>
         </RaffleyComponents.banner>
+
+        <.raffley_form form={@form} />
+
         <div class="raffles" id="raffles" phx-update="stream">
           <.raffle_card :for={{id, raffle} <- @streams.raffles} id={id} raffle={raffle} />
         </div>
@@ -34,8 +40,20 @@ defmodule RaffleyWeb.RaffleLive.Index do
     """
   end
 
-  attr :raffle, Raffle, required: true
-  attr :id, :string, required: true
+  def raffley_form(assigns) do
+    statuses = Raffles.list_raffle_statuses()
+
+    ~H"""
+    <.form for={@form}>
+      <.input field={@form[:q]} placeholder="search..." autocomplete="off" />
+      <.input type="select" field={@form[:status]} prompt="status" options={statuses} />
+      <.input type="select" field={@form[:sort_by]} prompt="sort" options={[:prize, :ticket_price]} />
+    </.form>
+    """
+  end
+
+  attr(:raffle, Raffle, required: true)
+  attr(:id, :string, required: true)
 
   def raffle_card(assigns) do
     ~H"""
