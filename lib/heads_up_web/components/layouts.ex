@@ -13,11 +13,24 @@ defmodule HeadsUpWeb.Layouts do
 
   def app(assigns) do
     ~H"""
-    <header class="navbar px-4 sm:px-6 lg:px-8">
-      <div class="flex-1">
-        <a href="/" class="flex-1 flex items-center gap-2">
-          <img src={~p"/images/heads-up-logo.png"} width="175" />
-        </a>
+    <header class="px-4 sm:px-6 lg:px-8">
+      <div class="flex items-center justify-between border-b border-zinc-100 py-3 text-sm">
+        <div class="flex items-center gap-4">
+          <a href="/">
+            <img src={~p"/images/heads-up-logo.png"} width="175" />
+          </a>
+        </div>
+        <div class="flex items-center gap-4 font-semibold leading-6 text-zinc-900">
+          <.link navigate={~p"/incidents"}>
+            Incidents
+          </.link>
+          <.link navigate={~p"/effort"}>
+            Effort
+          </.link>
+          <.link navigate={~p"/admin/incidents"}>
+            Admin
+          </.link>
+        </div>
       </div>
     </header>
 
