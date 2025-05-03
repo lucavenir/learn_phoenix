@@ -7,10 +7,20 @@ defmodule RaffleyWeb.RaffleLive.Index do
 
   @impl true
   def mount(_params, _session, socket) do
+    statuses = Raffles.list_raffle_statuses()
+
+    sorting = [
+      Prize: "prize",
+      "Price: Hight to Low": "ticket_price_desc",
+      "Price: Low to High": "ticket_price_asc"
+    ]
+
     socket =
       socket
       |> stream(:raffles, Raffles.list_raffles())
       |> assign(:form, to_form(%{}))
+      |> assign(:statuses, statuses)
+      |> assign(:sorting, sorting)
 
     {:ok, socket}
   end
@@ -30,9 +40,12 @@ defmodule RaffleyWeb.RaffleLive.Index do
           </:details>
         </RaffleyComponents.banner>
 
-        <.raffley_form form={@form} />
+        <.raffley_form form={@form} statuses={@statuses} sorting={@sorting} />
 
         <div class="raffles" id="raffles" phx-update="stream">
+          <div id="raffles-empty" class="no-results only:block hidden">
+            No raffles found. Try changing the filters.
+          </div>
           <.raffle_card :for={{id, raffle} <- @streams.raffles} id={id} raffle={raffle} />
         </div>
       </div>
@@ -41,13 +54,11 @@ defmodule RaffleyWeb.RaffleLive.Index do
   end
 
   def raffley_form(assigns) do
-    statuses = Raffles.list_raffle_statuses()
-
     ~H"""
     <.form for={@form} id="raffley_filter_form" phx-change="filter">
-      <.input field={@form[:q]} placeholder="search..." autocomplete="off" />
-      <.input type="select" field={@form[:status]} prompt="status" options={statuses} />
-      <.input type="select" field={@form[:sort_by]} prompt="sort" options={[:prize, :ticket_price]} />
+      <.input field={@form[:q]} placeholder="search..." autocomplete="off" phx-debounce="400" />
+      <.input type="select" field={@form[:status]} prompt="status" options={@statuses} />
+      <.input type="select" field={@form[:sort_by]} prompt="sort" options={@sorting} />
     </.form>
     """
   end
@@ -77,7 +88,7 @@ defmodule RaffleyWeb.RaffleLive.Index do
     socket =
       socket
       |> assign(:form, to_form(params))
-      |> stream(:raffles, Raffles.filter_raffles(params))
+      |> stream(:raffles, Raffles.filter_raffles(params), reset: true)
 
     {:noreply, socket}
   end
