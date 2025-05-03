@@ -7,11 +7,6 @@ defmodule HeadsUpWeb.IncidentLive.Index do
 
   @impl true
   def mount(_params, _session, socket) do
-    {:ok, socket}
-  end
-
-  @impl true
-  def handle_params(params, _uri, socket) do
     statuses = Incidents.list_all_statuses()
 
     sort_by = [
@@ -22,11 +17,19 @@ defmodule HeadsUpWeb.IncidentLive.Index do
 
     socket =
       socket
-      |> stream(:incidents, Incidents.filter_incidents(params))
-      |> assign(:form, to_form(params))
-      |> assign(page_title: "Incidents")
       |> assign(:statuses, statuses)
       |> assign(:sort_by, sort_by)
+      |> assign(page_title: "Incidents")
+
+    {:ok, socket}
+  end
+
+  @impl true
+  def handle_params(params, _uri, socket) do
+    socket =
+      socket
+      |> stream(:incidents, Incidents.filter_incidents(params), reset: true)
+      |> assign(:form, to_form(params))
 
     {:noreply, socket}
   end
@@ -41,7 +44,7 @@ defmodule HeadsUpWeb.IncidentLive.Index do
           <div id="empty" class="no-results only:block hidden">
             No incidents found. Try changing the filters.
           </div>
-          <.incident_card :for={{id, incident} <- @streams.incidents} id={id} incident={incident} />
+          <.incident_card :for={{id, incident} <- @streams.incidents} incident={incident} id={id} />
         </div>
       </div>
     </Layouts.app>
@@ -55,7 +58,7 @@ defmodule HeadsUpWeb.IncidentLive.Index do
       <.input field={@form[:status]} type="select" prompt="status.." options={@statuses} />
       <.input field={@form[:sort_by]} type="select" prompt="sort by.." options={@sort_by} />
 
-      <.link navigate={~p"/incidents"}>
+      <.link patch={~p"/incidents"}>
         Reset
       </.link>
     </.form>
@@ -67,8 +70,8 @@ defmodule HeadsUpWeb.IncidentLive.Index do
 
   def incident_card(assigns) do
     ~H"""
-    <.link navigate={~p"/incidents/#{@incident.id}"}>
-      <div class="card" id={@id}>
+    <.link navigate={~p"/incidents/#{@incident.id}"} id={@id}>
+      <div class="card">
         <img src={@incident.image_path} />
         <h2>{@incident.name}</h2>
         <div class="details">
@@ -89,7 +92,7 @@ defmodule HeadsUpWeb.IncidentLive.Index do
       |> Map.take(~w(q status sort_by))
       |> Map.reject(fn {_, v} -> v == "" end)
 
-    socket = push_navigate(socket, to: ~p"/incidents?#{params}")
+    socket = push_patch(socket, to: ~p"/incidents?#{params}")
 
     {:noreply, socket}
   end

@@ -28,7 +28,7 @@ defmodule HeadsUpWeb.IncidentLive.Show do
     <Layouts.app flash={@flash}>
       <div class="incident-show">
         <div class="incident">
-          <img src="/images/flat-tire.jpg" />
+          <img src={@incident.image_path} />
           <section>
             <HeadsUpComponents.badge status={@incident.status} />
             <header>
