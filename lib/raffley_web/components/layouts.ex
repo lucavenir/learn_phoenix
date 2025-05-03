@@ -26,6 +26,9 @@ defmodule RaffleyWeb.Layouts do
         <.link navigate={~p"/estimator"}>
           estimator
         </.link>
+        <.link navigate={~p"/admin/raffles"}>
+          admin
+        </.link>
       </div>
     </header>
 
