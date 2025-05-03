@@ -7,6 +7,11 @@ defmodule HeadsUpWeb.IncidentLive.Index do
 
   @impl true
   def mount(_params, _session, socket) do
+    {:ok, socket}
+  end
+
+  @impl true
+  def handle_params(params, _uri, socket) do
     statuses = Incidents.list_all_statuses()
 
     sort_by = [
@@ -17,13 +22,13 @@ defmodule HeadsUpWeb.IncidentLive.Index do
 
     socket =
       socket
-      |> stream(:incidents, Incidents.list_incidents())
-      |> assign(:form, to_form(%{}))
+      |> stream(:incidents, Incidents.filter_incidents(params))
+      |> assign(:form, to_form(params))
       |> assign(page_title: "Incidents")
       |> assign(:statuses, statuses)
       |> assign(:sort_by, sort_by)
 
-    {:ok, socket}
+    {:noreply, socket}
   end
 
   @impl true
@@ -49,6 +54,10 @@ defmodule HeadsUpWeb.IncidentLive.Index do
       <.input field={@form[:q]} placeholder="search..." autocomplete="off" phx-debounce="400" />
       <.input field={@form[:status]} type="select" prompt="status.." options={@statuses} />
       <.input field={@form[:sort_by]} type="select" prompt="sort by.." options={@sort_by} />
+
+      <.link navigate={~p"/incidents"}>
+        Reset
+      </.link>
     </.form>
     """
   end
@@ -75,10 +84,12 @@ defmodule HeadsUpWeb.IncidentLive.Index do
 
   @impl true
   def handle_event("filter", params, socket) do
-    socket =
-      socket
-      |> assign(:form, to_form(params))
-      |> stream(:incidents, Incidents.filter_incidents(params), reset: true)
+    params =
+      params
+      |> Map.take(~w(q status sort_by))
+      |> Map.reject(fn {_, v} -> v == "" end)
+
+    socket = push_navigate(socket, to: ~p"/incidents?#{params}")
 
     {:noreply, socket}
   end
