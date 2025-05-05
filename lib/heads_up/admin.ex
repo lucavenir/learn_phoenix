@@ -15,4 +15,15 @@ defmodule HeadsUp.Admin do
   def list_statuses() do
     Ecto.Enum.values(Incident, :status)
   end
+
+  def create_incident(attrs \\ %{}) do
+    %Incident{}
+    |> Incident.changeset(attrs)
+    |> Repo.insert()
+  end
+
+  def change_incident(%Incident{} = incident, attrs \\ %{}) do
+    incident
+    |> Incident.changeset(attrs)
+  end
 end
