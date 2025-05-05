@@ -20,6 +20,11 @@ defmodule HeadsUpWeb.AdminIncidentLive.Index do
     <Layouts.app flash={@flash}>
       <div class="admin-index">
         <.header>
+          <:actions>
+            <.link navigate={~p"/admin/incidents/new"} class="button">
+              New Incident
+            </.link>
+          </:actions>
           {@page_title}
         </.header>
 

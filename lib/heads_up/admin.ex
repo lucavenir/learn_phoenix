@@ -11,4 +11,8 @@ defmodule HeadsUp.Admin do
     |> order_by(desc: :inserted_at)
     |> Repo.all()
   end
+
+  def list_statuses() do
+    Ecto.Enum.values(Incident, :status)
+  end
 end
