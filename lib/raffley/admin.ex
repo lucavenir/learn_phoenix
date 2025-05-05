@@ -9,4 +9,14 @@ defmodule Raffley.Admin do
     |> order_by(desc: :inserted_at)
     |> Repo.all()
   end
+
+  def create_raffle(attrs \\ %{}) do
+    %Raffle{}
+    |> Raffle.changeset(attrs)
+    |> Repo.insert()
+  end
+
+  def change_raffle(%Raffle{} = raffle, attrs \\ %{}) do
+    Raffle.changeset(raffle, attrs)
+  end
 end

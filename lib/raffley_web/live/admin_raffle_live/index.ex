@@ -2,9 +2,6 @@ defmodule RaffleyWeb.AdminRaffleLive.Index do
   use RaffleyWeb, :live_view
 
   alias Raffley.Admin
-  alias Raffley.Raffles
-  alias Raffley.Raffles.Raffle
-
   alias RaffleyWeb.RaffleyComponents
 
   @impl true
